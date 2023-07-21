@@ -4,7 +4,7 @@ The following instructions are provided to demonstrate how to provision a new EK
 
 ![Stocks App](/docs/stocks.png)
 
-### Architecture
+### Kubernetes Architecture
 The following architecture diagram documents the EKS cluster resources used to setup the Stocks cloud native web application:
 
 ![Stocks App](/docs/eks-stocks.png)

@@ -10,7 +10,7 @@ The following architecture diagram documents the EKS cluster resources used to s
 ![Stocks App](/docs/eks-stocks.png)
 
 ### Web Application Architecture
-The Stock cloud native web app consists of the following 3 main components:
+The Stocks cloud native web app consists of the following 3 main components:
 
 #### Stocks Frontend (App)
 
@@ -49,7 +49,7 @@ Source Code and Artifacts:
 - Container Image: [cloudacademydevops/stocks-db](https://hub.docker.com/r/cloudacademydevops/stocks-db)
 
 ### Prerequisites
-Ensure that the following tools are installed and configure appropriately.
+Ensure that the following tools are installed and configured appropriately.
 
 - Terraform CLI
 - AWS CLI

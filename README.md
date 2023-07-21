@@ -9,6 +9,45 @@ The following architecture diagram documents the EKS cluster resources used to s
 
 ![Stocks App](/docs/eks-stocks.png)
 
+### Web Application Architecture
+The Stock cloud native web app consists of the following 3 main components:
+
+#### Stocks Frontend (App)
+
+Implements a web UI using the following languages/frameworks:
+
+- React 16
+- Yarn
+
+Source Code and Artifacts:
+
+- GitHub Repo: https://github.com/cloudacademy/stocks-app
+- Container Image: [cloudacademydevops/stocks-app](https://hub.docker.com/r/cloudacademydevops/stocks-app)
+
+#### Stocks API
+
+Implements a RESTful based API using the following languages/frameworks:
+
+- Java 17
+- Spring Boot
+- Maven 3
+
+Source Code and Artifacts:
+
+- GitHub Repo: https://github.com/cloudacademy/stocks-api
+- Container Image: [cloudacademydevops/stocks-api](https://hub.docker.com/r/cloudacademydevops/stocks-api)
+
+#### Stocks DB
+
+Provisons and populates a SQL database using the following technology:
+
+- MySQL 8
+
+Source Code and Artifacts:
+
+- GitHub Repo: https://github.com/cloudacademy/stocks-db
+- Container Image: [cloudacademydevops/stocks-db](https://hub.docker.com/r/cloudacademydevops/stocks-db)
+
 ### Prerequisites
 Ensure that the following tools are installed and configure appropriately.
 

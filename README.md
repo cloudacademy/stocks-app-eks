@@ -2,6 +2,9 @@
 ## EKS Cluster and Stocks Cloud Native App Deployment
 The following instructions are provided to demonstrate how to provision a new EKS cluster and automatically deploy a fully functional Stocks cloud native web application.
 
+An equivalent **ECS** setup is located here:
+https://github.com/cloudacademy/stocks-app-eks
+
 **Note**: For simplicity purposes only (to speedup deployment time etc.), the DB has been containerized. In production systems this should be setup using RDS.
 
 ![Stocks App](/docs/stocks.png)

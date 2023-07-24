@@ -2,6 +2,8 @@
 ## EKS Cluster and Stocks Cloud Native App Deployment
 The following instructions are provided to demonstrate how to provision a new EKS cluster and automatically deploy a fully functional Stocks cloud native web application.
 
+**Note**: For simplicity purposes only (to speedup deployment time etc.), the DB has been containerized. In production systems this should be setup using RDS.
+
 ![Stocks App](/docs/stocks.png)
 
 ### Kubernetes Architecture
@@ -48,6 +50,8 @@ Source Code and Artifacts:
 - GitHub Repo: https://github.com/cloudacademy/stocks-db
 - Container Image: [cloudacademydevops/stocks-db](https://hub.docker.com/r/cloudacademydevops/stocks-db)
 
+**Note**: For simplicity purposes only (to speedup deployment time etc.), the DB has been containerized. In production systems this should be setup using RDS.
+
 ### Prerequisites
 Ensure that the following tools are installed and configured appropriately.
 
@@ -56,7 +60,7 @@ Ensure that the following tools are installed and configured appropriately.
 - Helm CLI
 - Kubectl CLI
 
-Note: The terraforming commands below have been tested successfully using the following tools:
+Note: The terraforming commands below have been tested successfully using the following versions:
 
 - `terraform`: 1.5.3
 - `aws`: aws-cli/2.13.2
@@ -88,7 +92,7 @@ Note: The terraforming commands below have been tested successfully using the fo
     kubectl get nodes
     ```
 
-    If the previous command errors out due to an authentication issue, considering running the following AWS CLI command to establish a KUBECONFIG settings file:
+    If the previous command errors out due to an authentication issue, consider running the following AWS CLI command to re-establish a KUBECONFIG settings file:
 
     ```
     export KUBECONFIG=$(pwd)/config

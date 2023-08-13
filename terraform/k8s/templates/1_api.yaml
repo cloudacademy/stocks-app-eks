@@ -27,11 +27,11 @@ spec:
         imagePullPolicy: Always
         env:
           - name: DB_CONNSTR
-            value: jdbc:mysql://db:3306/stocks
+            value: jdbc:mysql://RDS_AURORA_ENDPOINT:3306/cloudacademy
           - name: DB_USER
             value: root
           - name: DB_PASSWORD
-            value: fo11owth3wh1t3r4bb1t
+            value: followthewhiterabbit
         ports:
         - containerPort: 8080
 ---

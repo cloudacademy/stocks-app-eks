@@ -1,18 +1,15 @@
-
 ## EKS Cluster and Stocks Cloud Native App Deployment
 The following instructions are provided to demonstrate how to provision a new EKS cluster and automatically deploy a fully functional Stocks cloud native web application.
 
 An equivalent **ECS** setup is located here:
 https://github.com/cloudacademy/stocks-app-ecs
 
-**Note**: For simplicity purposes only (to speedup deployment time etc.), the DB has been containerized. In production systems this should be setup using RDS.
-
 ![Stocks App](/docs/stocks.png)
 
 ### Kubernetes Architecture
-The following architecture diagram documents the EKS cluster resources used to setup the Stocks cloud native web application:
+The following architecture diagram documents the EKS cluster resources and Aurora RDS DB (serverless v1) used to setup the Stocks cloud native web application:
 
-![Stocks App](/docs/eks-stocks.png)
+![Stocks App](/docs/eks-stocks-v2.png)
 
 ### Web Application Architecture
 The Stocks cloud native web app consists of the following 3 main components:
@@ -46,14 +43,7 @@ Source Code and Artifacts:
 
 Provisons and populates a SQL database using the following technology:
 
-- MySQL 8
-
-Source Code and Artifacts:
-
-- GitHub Repo: https://github.com/cloudacademy/stocks-db
-- Container Image: [cloudacademydevops/stocks-db](https://hub.docker.com/r/cloudacademydevops/stocks-db)
-
-**Note**: For simplicity purposes only (to speedup deployment time etc.), the DB has been containerized. In production systems this should be setup using RDS.
+- MySQL 5.7
 
 ### Prerequisites
 Ensure that the following tools are installed and configured appropriately.
@@ -128,12 +118,36 @@ Note: The terraforming commands below have been tested successfully using the fo
     curl -I $(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")
     ```
 
-    3.5. Generate and Test Stocks URL Endpoint
+4. Examine Aurora RDS DB
 
-    Execute the following command to generate Stocks URL:
+    4.1. List Database Clusters
+
+    ```
+    aws rds describe-db-clusters --region us-west-2
+    ```
+
+    4.2. List Database Cluster Endpoints
+
+    ```
+    aws rds describe-db-cluster-endpoints --db-cluster-identifier cloudacademy --region us-west-2
+    ```
+
+5. Generate and Test Stocks API Endpoint
+
+    Execute the following command to generate Stocks API URL:
+
+    ```
+    echo http://$(kubectl get ing -n cloudacademy api -o jsonpath="{.spec.rules[0].host}")
+    ```
+
+    Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks CSV formatted data is accessible.
+
+6. Generate and Test Stocks APP (frontend) Endpoint
+
+    Execute the following command to generate Stocks API URL:
 
     ```
     echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")
     ```
 
-    Copy the URL from the previous output and browse to it within your own browser.
+    Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks App (frontend) loads successfully.

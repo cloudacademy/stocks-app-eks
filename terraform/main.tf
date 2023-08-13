@@ -10,10 +10,6 @@ terraform {
       source  = "hashicorp/helm"
       version = ">= 2.10.0"
     }
-    null = {
-      source  = "hashicorp/null"
-      version = ">= 3.2.0"
-    }
   }
 }
 
@@ -26,18 +22,27 @@ data "aws_availability_zones" "available" {}
 locals {
   name        = "cloudacademydevops"
   environment = "demo"
-  k8s_version = "1.27"
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 3)
 
+  k8s = {
+    version        = "1.27"
+    instance_types = ["m5.large"]
+    capacity_type  = "SPOT"
+    disk_size      = 10
+    min_size       = 2
+    max_size       = 2
+    desired_size   = 2
+  }
 
-  k8s_instance_types = ["m5.large"]
-  k8s_capacity_type  = "SPOT"
-  k8s_disk_size      = 10
-  k8s_min_size       = 2
-  k8s_max_size       = 2
-  k8s_desired_size   = 2
+  rds = {
+    master_username = "root"
+    master_password = "followthewhiterabbit"
+    db_name         = "cloudacademy"
+    scaling_min     = 2
+    scaling_max     = 4
+  }
 }
 
 #====================================
@@ -95,7 +100,7 @@ module "eks" {
   version = ">= 19.15.0"
 
   cluster_name    = "${local.name}-eks"
-  cluster_version = local.k8s_version
+  cluster_version = local.k8s.version
 
   cluster_endpoint_public_access = true
 
@@ -112,20 +117,111 @@ module "eks" {
     default = {
       use_custom_launch_template = false
 
-      instance_types = local.k8s_instance_types
-      capacity_type  = local.k8s_capacity_type
+      instance_types = local.k8s.instance_types
+      capacity_type  = local.k8s.capacity_type
 
-      disk_size = local.k8s_disk_size
+      disk_size = local.k8s.disk_size
 
-      min_size     = local.k8s_min_size
-      max_size     = local.k8s_max_size
-      desired_size = local.k8s_desired_size
+      min_size     = local.k8s.min_size
+      max_size     = local.k8s.max_size
+      desired_size = local.k8s.desired_size
     }
   }
 
   tags = {
     Name        = "${local.name}-eks"
     Environment = local.environment
+  }
+}
+
+#====================================
+
+resource "aws_db_subnet_group" "cloudacademy" {
+  name       = "cloudacademy"
+  subnet_ids = module.vpc.private_subnets
+
+  tags = {
+    Name = "CloudAcademy DB subnet group"
+  }
+}
+
+resource "aws_security_group" "allow_mysql_from_private_subnets" {
+  name   = "allow_mysql_from_private_subnets"
+  vpc_id = module.vpc.vpc_id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = module.vpc.private_subnets_cidr_blocks
+  }
+}
+
+resource "aws_rds_cluster" "cloudacademy" {
+  cluster_identifier   = "cloudacademy"
+  engine               = "aurora-mysql"
+  engine_mode          = "serverless"
+  enable_http_endpoint = true
+
+  master_username = local.rds.master_username
+  master_password = local.rds.master_password
+  database_name   = local.rds.db_name
+
+  backup_retention_period = 1
+  skip_final_snapshot     = true
+  db_subnet_group_name    = aws_db_subnet_group.cloudacademy.name
+  vpc_security_group_ids  = [aws_security_group.allow_mysql_from_private_subnets.id]
+
+  scaling_configuration {
+    auto_pause               = true
+    min_capacity             = 1
+    max_capacity             = 1
+    seconds_until_auto_pause = 300
+    timeout_action           = "ForceApplyCapacityChange"
+  }
+}
+
+#====================================
+
+resource "random_id" "db_creds" {
+  byte_length = 8
+}
+
+resource "aws_secretsmanager_secret" "db_creds" {
+  name = "db-creds-${random_id.db_creds.hex}"
+}
+
+resource "aws_secretsmanager_secret_version" "db_creds" {
+  secret_id = aws_secretsmanager_secret.db_creds.id
+  secret_string = jsonencode(
+    {
+      username = local.rds.master_username
+      password = local.rds.master_password
+      dbname   = local.rds.db_name
+      engine   = "mysql"
+    }
+  )
+}
+
+resource "terraform_data" "db_setup" {
+  triggers_replace = [
+    filesha1("db_setup.sql")
+  ]
+
+  provisioner "local-exec" {
+    interpreter = ["bash", "-c"]
+    command     = <<-EOF
+			while read line; do
+				echo "$line"
+				aws rds-data execute-statement --resource-arn "$DB_ARN" --database  "$DB_NAME" --secret-arn "$SECRET_ARN" --sql "$line"
+			done  < <(awk 'BEGIN{RS=";\n"}{gsub(/\n/,""); if(NF>0) {print $0";"}}' db_setup.sql)
+			EOF
+
+    environment = {
+      DB_ARN     = aws_rds_cluster.cloudacademy.arn
+      DB_NAME    = local.rds.db_name
+      SECRET_ARN = aws_secretsmanager_secret.db_creds.arn
+    }
   }
 }
 
@@ -163,21 +259,22 @@ resource "helm_release" "nginx_ingress" {
   }
 }
 
-resource "null_resource" "deploy_app" {
-  triggers = {
-    always_run = "${timestamp()}"
-  }
+resource "terraform_data" "deploy_app" {
+  triggers_replace = [
+    "${timestamp()}"
+  ]
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
     working_dir = path.module
     command     = <<EOT
       echo deploying app...
-      ./k8s/app.install.sh
+      ./k8s/app.install.sh ${aws_rds_cluster.cloudacademy.endpoint}
     EOT
   }
 
   depends_on = [
-    helm_release.nginx_ingress
+    helm_release.nginx_ingress,
+    terraform_data.db_setup
   ]
 }

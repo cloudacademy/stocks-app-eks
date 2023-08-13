@@ -41,7 +41,7 @@ Source Code and Artifacts:
 
 #### Stocks DB
 
-Provisons and populates a SQL database using the following technology:
+Aurora RDS DB (serverless v1) SQL database:
 
 - MySQL 5.7
 

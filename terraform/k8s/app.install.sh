@@ -31,12 +31,12 @@ echo -e "\nSTEP3: updating K8s manifest files...\n"
 sed \
 -e "s/RDS_AURORA_ENDPOINT/$1/g" \
 -e "s/API_HOST_INGRESS_FQDN/${API_PUBLIC_FQDN}/g" \
-./k8s/templates/1_api.yaml > ./k8s/manifests/1_api.yaml
+./k8s/templates/2_api.yaml > ./k8s/manifests/2_api.yaml
 
 sed \
 -e "s/API_HOST_INGRESS_FQDN/${API_PUBLIC_FQDN}/g" \
 -e "s/FRONTEND_HOST_INGRESS_FQDN/${FRONTEND_PUBLIC_FQDN}/g" \
-./k8s/templates/2_frontend.yaml > ./k8s/manifests/2_frontend.yaml
+./k8s/templates/3_frontend.yaml > ./k8s/manifests/3_frontend.yaml
 
 # ===========================
 

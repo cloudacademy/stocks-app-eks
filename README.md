@@ -24,7 +24,7 @@ Implements a web UI using the following languages/frameworks:
 Source Code and Artifacts:
 
 - GitHub Repo: https://github.com/cloudacademy/stocks-app
-- Container Image: [cloudacademydevops/stocks-app](https://hub.docker.com/r/cloudacademydevops/stocks-app)
+- Container Image: [cloudacademydevops/stocks-app:v1](https://hub.docker.com/r/cloudacademydevops/stocks-app)
 
 #### Stocks API
 
@@ -37,7 +37,7 @@ Implements a RESTful based API using the following languages/frameworks:
 Source Code and Artifacts:
 
 - GitHub Repo: https://github.com/cloudacademy/stocks-api
-- Container Image: [cloudacademydevops/stocks-api](https://hub.docker.com/r/cloudacademydevops/stocks-api)
+- Container Image: [cloudacademydevops/stocks-api:v1](https://hub.docker.com/r/cloudacademydevops/stocks-api)
 
 #### Stocks DB
 

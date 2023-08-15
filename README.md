@@ -20,6 +20,7 @@ Implements a web UI using the following languages/frameworks:
 
 - React 16
 - Yarn
+- Nginx
 
 Source Code and Artifacts:
 

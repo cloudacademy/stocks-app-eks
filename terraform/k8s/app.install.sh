@@ -2,7 +2,6 @@
 echo -e "\nRDS ENDPOINT: $1\n"
 echo -e "\nSTEP1: updating kubeconfig...\n"
 
-aws eks update-kubeconfig --region us-west-2 --name cloudacademydevops-eks
 kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f - # create namespace if not exists
 kubectl config set-context --current --namespace=cloudacademy
 

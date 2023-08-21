@@ -102,7 +102,9 @@ module "eks" {
   cluster_name    = "${local.name}-eks"
   cluster_version = local.k8s.version
 
-  cluster_endpoint_public_access = true
+  cluster_endpoint_public_access   = true
+  attach_cluster_encryption_policy = false
+  create_iam_role                  = true
 
   cluster_addons = {
     coredns    = {}
@@ -116,6 +118,7 @@ module "eks" {
   eks_managed_node_groups = {
     default = {
       use_custom_launch_template = false
+      create_iam_role            = true
 
       instance_types = local.k8s.instance_types
       capacity_type  = local.k8s.capacity_type
@@ -268,6 +271,8 @@ resource "terraform_data" "deploy_app" {
     interpreter = ["/bin/bash", "-c"]
     working_dir = path.module
     command     = <<EOT
+      echo setting up k8s auth...
+      aws eks update-kubeconfig --region us-west-2 --name cloudacademydevops-eks
       echo deploying app...
       ./k8s/app.install.sh ${aws_rds_cluster.cloudacademy.endpoint}
     EOT

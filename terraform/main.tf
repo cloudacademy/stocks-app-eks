@@ -123,8 +123,8 @@ module "aurora" {
 #====================================
 
 module "eks" {
-  source  = "terraform-aws-modules/eks/aws"
-  version = ">= 19.15.0"
+  # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
+  source = "github.com/cloudacademy/terraform-aws-eks"
 
   cluster_name    = local.k8s.cluster_name
   cluster_version = local.k8s.version

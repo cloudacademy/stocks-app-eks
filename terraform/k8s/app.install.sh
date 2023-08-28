@@ -14,7 +14,7 @@ INGRESS_LB_FQDN=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o j
 echo $INGRESS_LB_FQDN
 
 until nslookup $INGRESS_LB_FQDN >/dev/null 2>&1; do echo "waiting for DNS propagation..." && sleep 5; done
-INGRESS_PUBLIC_IP=$(dig +short $INGRESS_LB_FQDN | head -n1)
+INGRESS_PUBLIC_IP=$(dig +short $INGRESS_LB_FQDN | sort | head -n1)
 echo $INGRESS_PUBLIC_IP
 
 API_PUBLIC_FQDN=cloudacademy.api.$INGRESS_PUBLIC_IP.nip.io

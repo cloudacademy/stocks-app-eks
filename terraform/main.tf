@@ -34,7 +34,7 @@ locals {
     cluster_name   = "${local.name}-eks-${local.environment}"
     version        = "1.27"
     instance_types = ["m5.large"]
-    capacity_type  = "SPOT"
+    capacity_type  = "ON_DEMAND"
     disk_size      = 10
     min_size       = 2
     max_size       = 2

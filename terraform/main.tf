@@ -221,7 +221,7 @@ resource "terraform_data" "deploy_app" {
       echo setting up k8s auth...
       aws eks update-kubeconfig --region ${local.region} --name ${module.eks.cluster_name}
       echo deploying app...
-      rm ./manifests/*.yaml
+      rm -f ./manifests/*.yaml
       tree
       ./app.install.sh ${module.aurora.db_endpoint}
     EOT

@@ -9,7 +9,7 @@ https://github.com/cloudacademy/stocks-app-ecs
 ### Kubernetes Architecture
 The following architecture diagram documents the EKS cluster resources and Aurora RDS DB (serverless v1) used to setup the Stocks cloud native web application:
 
-![Stocks App](/docs/eks-stocks-v2.png)
+![Stocks App](/docs/eks-stocks-arch2.png)
 
 ### Web Application Architecture
 The Stocks cloud native web app consists of the following 3 main components:

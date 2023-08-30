@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 echo -e "\nRDS ENDPOINT: $1\n"
+
 echo -e "\nSTEP1: updating kubeconfig...\n"
 
 kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f - # create namespace if not exists
@@ -43,7 +44,7 @@ kubectl patch ingress frontend -p "{\"spec\": {\"rules\": [{\"host\": \"$INGRESS
 
 # ===========================
 
-echo -e "\nSTEP4: create APP (frontend) compute resources...\n"
+echo -e "\nSTEP6: create APP (frontend) compute resources...\n"
 
 sed \
 -e "s/INGRESS_FQDN/${INGRESS_LB_FQDN}/g" \

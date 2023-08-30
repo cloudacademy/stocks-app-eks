@@ -95,10 +95,10 @@ Note: The terraforming commands below have been tested successfully using the fo
 
 3. Examine EKS Cluster Resources
 
-    3.1. Check Current Namespaces
+    3.1. Check Namespaces
 
     ```
-    kubectl get namespaces
+    kubectl get ns
     ```
 
     3.2. Check Ingress Controller Setup
@@ -110,13 +110,7 @@ Note: The terraforming commands below have been tested successfully using the fo
     3.3. Check Cloud Native App Setup
 
     ```
-    kubectl get all,ingress -n cloudacademy
-    ```
-
-    3.4. Test Access to the Stocks Frontend Ingress Endpoint
-
-    ```
-    curl -I $(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")
+    kubectl get all,ingress,secret -n cloudacademy
     ```
 
 4. Examine Aurora RDS DB
@@ -138,7 +132,7 @@ Note: The terraforming commands below have been tested successfully using the fo
     Execute the following command to generate Stocks API URL:
 
     ```
-    echo http://$(kubectl get ing -n cloudacademy api -o jsonpath="{.spec.rules[0].host}")
+    echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")/api/stocks/csv
     ```
 
     Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks CSV formatted data is accessible.
@@ -151,4 +145,4 @@ Note: The terraforming commands below have been tested successfully using the fo
     echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")
     ```
 
-    Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks App (frontend) loads successfully.
+    Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks App (frontend) loads successfully, complete with stocks data.

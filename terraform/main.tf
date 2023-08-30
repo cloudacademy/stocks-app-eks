@@ -28,9 +28,16 @@ locals {
   environment = "prod"
 
   vpc_cidr = "10.0.0.0/16"
-  azs      = slice(data.aws_availability_zones.available.names, 0, 3)
+  azs      = slice(data.aws_availability_zones.available.names, 0, 2)
+  //returns
+  #   tolist([
+  #   "us-west-2a",
+  #   "us-west-2b"
+  # ])
 
   k8s = {
+    stocks_app_architecture = "arch2" #either arch1 or arch2
+
     cluster_name   = "${local.name}-eks-${local.environment}"
     version        = "1.27"
     instance_types = ["m5.large"]
@@ -209,12 +216,14 @@ resource "terraform_data" "deploy_app" {
 
   provisioner "local-exec" {
     interpreter = ["/bin/bash", "-c"]
-    working_dir = path.module
+    working_dir = "${path.module}/k8s/archs/${local.k8s.stocks_app_architecture}"
     command     = <<EOT
       echo setting up k8s auth...
       aws eks update-kubeconfig --region ${local.region} --name ${module.eks.cluster_name}
       echo deploying app...
-      ./k8s/app.install.sh ${module.aurora.db_endpoint}
+      rm ./manifests/*.yaml
+      tree
+      ./app.install.sh ${module.aurora.db_endpoint}
     EOT
   }
 

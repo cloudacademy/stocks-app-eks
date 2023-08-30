@@ -23,7 +23,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: cloudacademydevops/stocks-app:v1
+        image: cloudacademydevops/stocks-app:v2
         imagePullPolicy: Always
         env:
           - name: REACT_APP_APIHOSTPORT

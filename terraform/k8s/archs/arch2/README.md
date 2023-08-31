@@ -65,7 +65,7 @@ spec:
 **Note**: The `host` field is overwritten dynamically at deployment time with the FQDN of the Ingress Controller's ELB (created when the Ingress Controller is installed). The `app.install.sh` is responsible for scripting this update.
 
 ### Frontend Pod Nginx Config
-The following [Nginx configuration](https://github.com/cloudacademy/stocks-app/blob/main/conf/conf.d/default.conf.template) is used to implemented within the Stocks App (frontend) container image to route Stock API traffic:
+The following [Nginx configuration](https://github.com/cloudacademy/stocks-app/blob/main/conf/conf.d/default.conf.template) is implemented within the Stocks App (frontend) container image to route Stock API traffic:
 
 ```
 upstream api-backend {

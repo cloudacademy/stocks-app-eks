@@ -95,7 +95,7 @@ server {
 }
 ```
 
-**Note**: The `NGINX_APP_APIHOSTPORT` environment variable is substituted in dynamically during container launch time. The `NGINX_APP_APIHOSTPORT` environment variable is set to the API's cluster internal service FQDN and port number, `api.cloudacademy.svc.cluster.local:8080`. This configuration can be viewed in the `4_frontend.yaml` manifest file:
+**Note**: The `NGINX_APP_APIHOSTPORT` environment variable is substituted in dynamically during container launch time. The `NGINX_APP_APIHOSTPORT` environment variable is set to the Stock API's k8s cluster internal service FQDN and port number, `api.cloudacademy.svc.cluster.local:8080`. This configuration can be viewed in the `4_frontend.yaml` manifest file:
 
 ```
 apiVersion: apps/v1

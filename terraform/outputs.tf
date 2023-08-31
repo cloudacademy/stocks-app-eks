@@ -1,5 +1,5 @@
 output "echo-frontend-url-command" {
-  value = "echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath='{.spec.rules[0].host}')"
+  value = "echo http://$(kubectl get ing -n cloudacademy public -o jsonpath='{.spec.rules[0].host}')"
 }
 
 

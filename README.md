@@ -174,7 +174,7 @@ Note: The terraforming commands below have been tested successfully using the fo
     Execute the following command to generate Stocks API URL:
 
     ```
-    echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")/api/stocks/csv
+    echo http://$(kubectl get ing -n cloudacademy public -o jsonpath="{.spec.rules[0].host}")/api/stocks/csv
     ```
 
     Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks CSV formatted data is accessible.
@@ -184,7 +184,7 @@ Note: The terraforming commands below have been tested successfully using the fo
     Execute the following command to generate Stocks API URL:
 
     ```
-    echo http://$(kubectl get ing -n cloudacademy frontend -o jsonpath="{.spec.rules[0].host}")
+    echo http://$(kubectl get ing -n cloudacademy public -o jsonpath="{.spec.rules[0].host}")
     ```
 
     Copy the URL from the previous output and browse to it within your own browser. Confirm that the Stocks App (frontend) loads successfully, complete with stocks data.

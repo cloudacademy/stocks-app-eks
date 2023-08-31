@@ -58,7 +58,7 @@ The Stocks cloud native web app consists of the following 3 main components:
 
 #### Stocks Frontend (App)
 
-Implements a web UI using the following languages/frameworks:
+Implements a web UI using the following languages/frameworks/tools:
 
 - React 16
 - Yarn
@@ -71,7 +71,7 @@ Source Code and Artifacts:
 
 #### Stocks API
 
-Implements a RESTful based API using the following languages/frameworks:
+Implements a RESTful based API using the following languages/frameworks/tools:
 
 - Java 17
 - Spring Boot

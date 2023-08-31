@@ -4,7 +4,7 @@ This architecture consists of a single Ingress resource that has multiple paths 
 ![Stocks App](/docs/eks-stocks-arch1.png)
 
 ### Terraform Provisioning
-This architecture is deployed automatically during provisioning time by setting the `k8s.stocks_app_architecture` local variable to `arch1` in the `main.tf` template.
+This architecture is deployed automatically during provisioning time by setting the `k8s.stocks_app_architecture` Local Value to `arch1` in the `main.tf` template.
 
 ```
 locals {

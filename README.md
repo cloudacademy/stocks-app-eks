@@ -96,7 +96,7 @@ Ensure that the following tools are installed and configured appropriately.
 - Helm CLI
 - Kubectl CLI
 
-Note: The terraforming commands below have been tested successfully using the following versions:
+**Note**: The terraforming commands below have been tested successfully using the following versions:
 
 - `terraform`: 1.5.3
 - `aws`: aws-cli/2.13.2

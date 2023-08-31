@@ -3,40 +3,6 @@ This architecture consists of a single Ingress resource that has multiple paths 
 
 ![Stocks App](/docs/eks-stocks-arch1.png)
 
-### Ingress Setup
-
-```
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: public
-  namespace: cloudacademy
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: fake.cloudacademy.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port:
-                  number: 8080
-          - path: /api/stocks/csv
-            pathType: Prefix
-            backend:
-              service:
-                name: api
-                port:
-                  number: 8080
-```
-
-**Note**: The `host` field is overwritten dynamically at deployment time with the FQDN of the Ingress Controller's ELB (created when the Ingress Controller is installed). The `app.install.sh` is responsible for scripting this update.
-
 ### Terraform Provisioning
 This architecture is deployed automatically during provisioning time by setting the `k8s.stocks_app_architecture` local variable to `arch1` in the `main.tf` template.
 
@@ -70,3 +36,37 @@ locals {
   }
 }
 ```
+
+### Ingress Setup
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: public
+  namespace: cloudacademy
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: fake.cloudacademy.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 8080
+          - path: /api/stocks/csv
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8080
+```
+
+**Note**: The `host` field is overwritten dynamically at deployment time with the FQDN of the Ingress Controller's ELB (created when the Ingress Controller is installed). The `app.install.sh` is responsible for scripting this update.

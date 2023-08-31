@@ -33,7 +33,7 @@ until kubectl get svc nginx-ingress-controller -n nginx-ingress >/dev/null 2>&1;
 INGRESS_LB_FQDN=$(kubectl get svc nginx-ingress-controller -n nginx-ingress -o jsonpath="{.status.loadBalancer.ingress[0].hostname}")
 echo $INGRESS_LB_FQDN
 
-kubectl patch ingress public -p "{\"spec\":{\"rules\":[{\"host\":\"$INGRESS_LB_FQDN\",\"http\":{\"paths\":[{\"path\":\"/\",\"pathType\":\"Prefix\",\"backend\":{\"service\":{\"name\":\"frontend\",\"port\":{\"number\":8080}}}},{\"path\":\"/api/stocks/csv\",\"pathType\":\"Prefix\",\"backend\":{\"service\":{\"name\":\"api\",\"port\":{\"number\":8080}}}}]}}]}}"
+kubectl patch ingress public --type json -p "[{\"op\": \"replace\", \"path\": \"/spec/rules/0/host\", \"value\": \"$INGRESS_LB_FQDN\"}]"
 
 # ===========================
 

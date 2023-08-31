@@ -29,14 +29,14 @@ locals {
 
   vpc_cidr = "10.0.0.0/16"
   azs      = slice(data.aws_availability_zones.available.names, 0, 2)
-  //returns
+  # returns
   #   tolist([
   #   "us-west-2a",
   #   "us-west-2b"
   # ])
 
   k8s = {
-    stocks_app_architecture = "arch2" #either arch1 or arch2
+    stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
     version        = "1.27"

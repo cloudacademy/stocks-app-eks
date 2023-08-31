@@ -1,22 +1,7 @@
-apiVersion: v1
-kind: Service
-metadata:
-  name: frontend
-  namespace: cloudacademy
-  labels:
-    role: frontend
-    env: demo
-spec:
-  ports:
-   - protocol: TCP
-     port: 8080
-  selector:
-    role: frontend
----
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend
+  name: public
   namespace: cloudacademy
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /

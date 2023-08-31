@@ -7,7 +7,49 @@ https://github.com/cloudacademy/stocks-app-ecs
 ![Stocks App](/docs/stocks.png)
 
 ### Kubernetes Architecture
-The following architecture diagram documents the EKS cluster resources and Aurora RDS DB (serverless v1) used to setup the Stocks cloud native web application:
+Two different Kubernetes architectures are provided for the deployment of the Stocks cloud native web app. The main difference between architectures is the Stock API routing path. To swap between the different architectures, set the `k8s.stocks_app_architecture` local variable to be either `arch1` or `arch2`.
+
+```
+locals {
+  name        = "cloudacademydevops"
+  environment = "prod"
+
+  vpc_cidr = "10.0.0.0/16"
+  azs      = slice(data.aws_availability_zones.available.names, 0, 2)
+  //returns
+  #   tolist([
+  #   "us-west-2a",
+  #   "us-west-2b"
+  # ])
+
+  k8s = {
+    stocks_app_architecture = "arch1" #either arch1 or arch2
+
+    cluster_name   = "${local.name}-eks-${local.environment}"
+    version        = "1.27"
+    instance_types = ["m5.large"]
+    capacity_type  = "ON_DEMAND"
+    disk_size      = 10
+    min_size       = 2
+    max_size       = 2
+    desired_size   = 2
+  }
+
+  rds = {
+    master_username = "root"
+    master_password = "followthewhiterabbit"
+    db_name         = "cloudacademy"
+    scaling_min     = 2
+    scaling_max     = 4
+  }
+}
+```
+
+#### Architecture 1 (arch1):
+
+![Stocks App](/docs/eks-stocks-arch1.png)
+
+#### Architecture 2 (arch2):
 
 ![Stocks App](/docs/eks-stocks-arch2.png)
 

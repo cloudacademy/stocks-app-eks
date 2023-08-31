@@ -27,7 +27,7 @@ spec:
         imagePullPolicy: Always
         env:
           - name: REACT_APP_APIHOSTPORT
-            value: API_HOST_INGRESS_FQDN
+            value: INGRESS_FQDN
         ports:
         - containerPort: 8080
 ---
@@ -45,24 +45,3 @@ spec:
      port: 8080
   selector:
     role: frontend
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: frontend
-  namespace: cloudacademy
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: FRONTEND_HOST_INGRESS_FQDN
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: frontend
-                port:
-                  number: 8080

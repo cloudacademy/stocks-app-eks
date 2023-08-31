@@ -55,25 +55,3 @@ spec:
      port: 8080
   selector:
     role: api
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: api
-  namespace: cloudacademy
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: API_HOST_INGRESS_FQDN
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: api
-                port:
-                  number: 8080
-

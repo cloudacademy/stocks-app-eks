@@ -1,3 +1,6 @@
+![Build Status](https://github.com/cloudacademy/stocks-app-eks/actions/workflows/release.yml/badge.svg) 
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/cloudacademy/stocks-app-eks)
+
 ## EKS Cluster and Stocks Cloud Native App Deployment
 The following instructions are provided to demonstrate how to provision a new EKS cluster and automatically deploy a fully functional Stocks cloud native web application.
 

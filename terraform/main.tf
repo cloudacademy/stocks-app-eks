@@ -165,6 +165,10 @@ module "eks" {
     }
   }
 
+  //don't do in production - this is for demo/lab purposes only
+  create_kms_key            = false
+  cluster_encryption_config = {}
+
   tags = {
     Name        = "${local.name}-eks"
     Environment = local.environment

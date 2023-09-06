@@ -8,23 +8,15 @@ kubectl config set-context --current --namespace=cloudacademy
 
 # ===========================
 
-echo -e "\nSTEP2: create secret resource...\n"
+echo -e "\nSTEP2: create Ingress resource...\n"
 
-cp ./templates/1_secret.yaml ./manifests/
+cp ./templates/1_ingress.yaml ./manifests/
 
-kubectl apply -f ./manifests/1_secret.yaml
-
-# ===========================
-
-echo -e "\nSTEP3: create Ingress resource...\n"
-
-cp ./templates/2_ingress.yaml ./manifests/
-
-kubectl apply -f ./manifests/2_ingress.yaml
+kubectl apply -f ./manifests/1_ingress.yaml
 
 # ===========================
 
-echo -e "\nSTEP4: patch Ingress resource...\n"
+echo -e "\nSTEP3: patch Ingress resource...\n"
 
 # shortcut to reuse the FQDN assigned to the nginx ingress controller ELB
 # not recommended for production environments (proper DNS management should be used - R53 etc)
@@ -37,22 +29,22 @@ kubectl patch ingress public --type json -p "[{\"op\": \"replace\", \"path\": \"
 
 # ===========================
 
-echo -e "\nSTEP5: create API resources...\n"
+echo -e "\nSTEP4: create API resources...\n"
 
 sed \
 -e "s/RDS_AURORA_ENDPOINT/$1/g" \
-./templates/3_api.yaml > ./manifests/3_api.yaml
+./templates/2_api.yaml > ./manifests/2_api.yaml
 
-kubectl apply -f ./manifests/3_api.yaml
+kubectl apply -f ./manifests/2_api.yaml
 
 # ===========================
 
-echo -e "\nSTEP6: create APP (frontend) compute resources...\n"
+echo -e "\nSTEP5: create APP (frontend) compute resources...\n"
 
 sed \
 -e "s/INGRESS_FQDN/${INGRESS_LB_FQDN}/g" \
-./templates/4_frontend.yaml > ./manifests/4_frontend.yaml
+./templates/3_frontend.yaml > ./manifests/3_frontend.yaml
 
-kubectl apply -f ./manifests/4_frontend.yaml
+kubectl apply -f ./manifests/3_frontend.yaml
 
 echo -e "\ndeployment finished\n"

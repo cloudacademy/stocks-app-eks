@@ -218,9 +218,9 @@ resource "terraform_data" "deploy_app" {
     interpreter = ["/bin/bash", "-c"]
     working_dir = "${path.module}/k8s/archs/${local.k8s.stocks_app_architecture}"
     command     = <<EOT
-      echo setting up k8s auth...
+      echo "setting up k8s auth..."
       aws eks update-kubeconfig --region ${local.region} --name ${module.eks.cluster_name}
-      echo deploying app...
+      echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
       rm -f ./manifests/*.yaml
       tree
       ./app.install.sh ${module.aurora.db_endpoint}

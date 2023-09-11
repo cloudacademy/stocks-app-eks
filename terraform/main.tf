@@ -231,6 +231,11 @@ resource "terraform_data" "deploy_app" {
     EOT
   }
 
+  provisioner "local-exec" {
+    when    = destroy
+    command = "kubectl delete ns cloudacademy --force=true"
+  }
+
   depends_on = [
     module.aurora,
     module.eks,

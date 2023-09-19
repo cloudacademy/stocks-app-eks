@@ -11,14 +11,11 @@ data:
       worker_connections 10240;
     }
     http {
-      upstream api-backend {
-          server api.cloudacademy.svc.cluster.local:8080;
-          keepalive 20;
-      }
-
       server {
         listen 8080;
         add_header Cache-Control no-cache;
+
+        set $target api.cloudacademy.svc.cluster.local:8080;
 
         location / {
           root   /usr/share/nginx/html;
@@ -28,7 +25,10 @@ data:
         }
 
         location /api/stocks/csv {
-          proxy_pass http://api-backend;
+          resolver         kube-dns.kube-system.svc.cluster.local valid=300s;
+          resolver_timeout 10s;
+
+          proxy_pass http://$target;
         }
 
         location /ok {

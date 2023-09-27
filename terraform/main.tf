@@ -144,6 +144,8 @@ module "eks" {
     coredns            = {}
     kube-proxy         = {}
     vpc-cni            = {}
+    aws-ebs-csi-driver = {}
+    aws-efs-csi-driver = {}
   }
 
   vpc_id     = module.vpc.vpc_id

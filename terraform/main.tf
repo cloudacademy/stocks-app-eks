@@ -40,7 +40,10 @@ locals {
 
     cluster_name   = "${local.name}-eks-${local.environment}"
     version        = "1.27"
-    instance_types = ["m5.large"]
+    instance_types = ["t3.small"]
+    credit_specification = {
+      cpu_credits = "standard"
+    }
     capacity_type  = "ON_DEMAND"
     disk_size      = 10
     min_size       = 2

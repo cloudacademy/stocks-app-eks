@@ -95,29 +95,6 @@ index d233c0d..2aa314d 100644
  module "eks" {
    # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
    source = "github.com/cloudacademy/terraform-aws-eks"
-@@ -139,9 +109,10 @@ module "eks" {
-   cluster_name    = local.k8s.cluster_name
-   cluster_version = local.k8s.version
- 
-+  iam_role_arn = "arn:aws:iam::638744092352:role/cloudacademylabs-EKSClusterRole-RT8EBM6OEM"
-   cluster_endpoint_public_access   = true
-   attach_cluster_encryption_policy = false
--  create_iam_role                  = true
-+  create_iam_role = false
- 
-   cluster_addons = {
-     coredns            = {}
-@@ -156,8 +127,9 @@ module "eks" {
- 
-   eks_managed_node_groups = {
-     default = {
-+      iam_role_arn = "arn:aws:iam::638744092352:role/cloudacademylabs-EKSClusterNodeGroupRole-MAJNFAKXR1QD"
-       use_custom_launch_template = false
--      create_iam_role            = true
-+      create_iam_role = false
- 
-       instance_types = local.k8s.instance_types
-       capacity_type  = local.k8s.capacity_type
 @@ -232,7 +204,7 @@ resource "terraform_data" "deploy_app" {
        echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
        rm -f ./manifests/*.yaml
@@ -152,12 +129,3 @@ index 97b871d..0bf1806 100644
  ---
  apiVersion: apps/v1
  kind: Deployment
-@@ -37,7 +28,7 @@ spec:
-         imagePullPolicy: Always
-         env:
-           - name: DB_CONNSTR
--            value: jdbc:mysql://RDS_AURORA_ENDPOINT:3306/cloudacademy
-+            value: jdbc:mysql://mysql:3306/cloudacademy
-           - name: DB_USER
-             valueFrom:
-               secretKeyRef:

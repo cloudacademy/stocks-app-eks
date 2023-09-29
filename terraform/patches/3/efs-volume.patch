@@ -1,0 +1,81 @@
+diff --git a/terraform/k8s/archs/arch1/app.install.sh b/terraform/k8s/archs/arch1/app.install.sh
+index fe95982..0530624 100755
+--- a/terraform/k8s/archs/arch1/app.install.sh
++++ b/terraform/k8s/archs/arch1/app.install.sh
+@@ -1,5 +1,6 @@
+ #!/usr/bin/env bash
+ echo -e "\nRDS ENDPOINT: $1\n"
++echo -e "\EFS ID: $2\n"
+ 
+ echo -e "\nSTEP1: updating kubeconfig...\n"
+ 
+@@ -11,6 +12,7 @@ kubectl config set-context --current --namespace=cloudacademy
+ echo -e "\nSTEP2: create Database resources...\n"
+ 
+ cp ./templates/00_db-setup.yaml ./templates/01_db.yaml ./manifests/
++sed -i "s/EFS_ID/$2/g" ./manifests/01_db.yaml
+ 
+ kubectl apply -f ./manifests/00_db-setup.yaml
+ kubectl apply -f ./manifests/01_db.yaml
+diff --git a/terraform/k8s/archs/arch1/templates/01_db.yaml b/terraform/k8s/archs/arch1/templates/01_db.yaml
+index aaef576..2100d7a 100644
+--- a/terraform/k8s/archs/arch1/templates/01_db.yaml
++++ b/terraform/k8s/archs/arch1/templates/01_db.yaml
+@@ -9,6 +9,29 @@ stringData:
+   DB_PASSWORD: followthewhiterabbit
+   DB_ROOT_PASSWORD: followthewhiterabbit
+ ---
++apiVersion: storage.k8s.io/v1
++kind: StorageClass
++metadata:
++  name: efs
++provisioner: efs.csi.aws.com
++parameters:
++  provisioningMode: efs-ap
++  fileSystemId: EFS_ID
++  directoryPerms: "700"
++---
++apiVersion: v1
++kind: PersistentVolumeClaim
++metadata:
++  name: backups
++  namespace: cloudacademy
++spec:
++  accessModes:
++    - ReadWriteMany
++  storageClassName: efs
++  resources:
++    requests:
++      storage: 1Gi
++---
+ apiVersion: apps/v1
+ kind: StatefulSet
+ metadata:
+@@ -18,7 +41,7 @@ metadata:
+     role: db
+     env: demo
+ spec:
+-  replicas: 1
++  replicas: 2
+   selector:
+     matchLabels:
+       role: db
+@@ -54,6 +77,8 @@ spec:
+             - name: db-setup
+               mountPath: /docker-entrypoint-initdb.d
+               readOnly: true
++            - name: backups
++              mountPath: /data/backups
+           resources:
+             requests:
+               cpu: 128m
+@@ -65,6 +90,9 @@ spec:
+       - name: db-setup
+         configMap:
+           name: db-setup
++      - name: backups
++        persistentVolumeClaim:
++          claimName: backups
+   volumeClaimTemplates:
+     - metadata:
+         name: data

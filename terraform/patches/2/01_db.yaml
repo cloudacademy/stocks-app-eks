@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-creds
+  namespace: cloudacademy
+type: Opaque
+stringData:
+  DB_USER: root
+  DB_PASSWORD: followthewhiterabbit
+  DB_ROOT_PASSWORD: followthewhiterabbit
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+  namespace: cloudacademy
+  labels:
+    role: db
+    env: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: db
+      env: demo
+  serviceName: mysql
+  template:
+    metadata:
+      labels: 
+        role: db
+        env: demo
+    spec:
+      containers:
+        - name: mysql
+          image: "public.ecr.aws/docker/library/mysql:5.7"
+          args: 
+            - "--ignore-db-dir=lost+found"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: DB_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              value: cloudacademy
+          ports:
+            - name: mysql
+              containerPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+            - name: db-setup
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+          resources:
+            requests:
+              cpu: 128m
+              memory: 128Mi
+            limits:
+              cpu: 256m
+              memory: 256Mi
+      volumes:
+      - name: db-setup
+        configMap:
+          name: db-setup
+      - name: data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  namespace: cloudacademy
+  labels:
+    role: db
+    env: demo
+spec:
+  ports:
+   - protocol: TCP
+     port: 3306
+  selector:
+    role: db

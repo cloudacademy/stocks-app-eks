@@ -1,0 +1,66 @@
+diff --git a/terraform/main.tf b/terraform/main.tf
+index 2aa314d..75a2bb8 100644
+--- a/terraform/main.tf
++++ b/terraform/main.tf
+@@ -102,6 +102,52 @@ module "vpc" {
+ 
+ #====================================
+ 
++resource "aws_security_group" "efs" {
++  name        = "${local.name}-efs"
++  description = "efs security group allow access to port 2049 (NFS)"
++  vpc_id      = module.vpc.vpc_id
++
++  ingress {
++    description = "allow inbound NFS traffic"
++    from_port   = 2049
++    to_port     = 2049
++    protocol    = "tcp"
++    cidr_blocks = [local.vpc_cidr]
++  }
++
++  egress {
++    description = "Allow all egress"
++    from_port   = 0
++    to_port     = 0
++    protocol    = "-1"
++    cidr_blocks = ["0.0.0.0/0"]
++  }
++
++  tags = {
++    Name        = "${local.name}-efs"
++    Environment = local.environment
++  }
++}
++
++resource "aws_efs_file_system" "backups" {
++  encrypted      = true
++
++  tags = {
++    Name        = "${local.name}-efs-backups"
++    Environment = local.environment
++  }
++}
++
++resource "aws_efs_mount_target" "efsbackuptarget" {
++  count = length(module.vpc.private_subnets)
++
++  file_system_id  = aws_efs_file_system.backups.id
++  subnet_id       = module.vpc.private_subnets[count.index]
++  security_groups = [aws_security_group.efs.id]
++}
++
++#====================================
++
+ module "eks" {
+   # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
+   source = "github.com/cloudacademy/terraform-aws-eks"
+@@ -204,7 +250,7 @@ resource "terraform_data" "deploy_app" {
+       echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
+       rm -f ./manifests/*.yaml
+       tree
+-      ./app.install.sh mysql
++      ./app.install.sh mysql ${aws_efs_file_system.backups.id}
+     EOT
+   }
+ 

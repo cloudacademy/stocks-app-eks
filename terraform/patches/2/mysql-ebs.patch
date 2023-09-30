@@ -1,7 +1,7 @@
-diff --git a/terraform/k8s/archs/arch1/template/01_db.yaml b/terraform/k8s/archs/arch1/template/01_db.yaml
+diff --git a/terraform/k8s/archs/arch1/templates/01_db.yaml b/terraform/k8s/archs/arch1/templates/01_db.yaml
 index 66712c3..aaef576 100644
---- a/terraform/k8s/archs/arch1/template/01_db.yaml
-+++ b/terraform/k8s/archs/arch1/template/01_db.yaml
+--- a/terraform/k8s/archs/arch1/templates/01_db.yaml
++++ b/terraform/k8s/archs/arch1/templates/01_db.yaml
 @@ -65,8 +65,15 @@ spec:
        - name: db-setup
          configMap:
@@ -16,7 +16,7 @@ index 66712c3..aaef576 100644
 +        storageClassName: gp2
 +        resources:
 +          requests:
-+            storage: 2Gi 
++            storage: 2Gi
  ---
  apiVersion: v1
  kind: Service

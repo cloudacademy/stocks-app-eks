@@ -135,7 +135,7 @@ Ensure that the following tools are installed and configured appropriately.
 
     ```
     export KUBECONFIG=$(pwd)/config
-    aws eks --region us-west-2 update-kubeconfig --name cloudacademydevops-eks
+    aws eks --region ap-south-1 update-kubeconfig --name cloudacademydevops-eks
     ```
 
 3. Examine EKS Cluster Resources

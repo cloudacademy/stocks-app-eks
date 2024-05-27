@@ -2,6 +2,10 @@
 echo -e "\nRDS ENDPOINT: $1\n"
 
 echo -e "\nSTEP1: updating kubeconfig...\n"
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.27.12/2024-04-19/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$HOME/bin:$PATH
+echo 'export PATH=$HOME/bin:$PATH' >> ~/.bashrc
 
 kubectl create namespace cloudacademy --dry-run=client -o yaml | kubectl apply -f - # create namespace if not exists
 kubectl config set-context --current --namespace=cloudacademy

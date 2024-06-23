@@ -40,8 +40,8 @@ locals {
 
     cluster_name   = "${local.name}-eks-${local.environment}"
     version        = "1.27"
-    instance_types = ["m5.large"]
-    #instance_types = ["t2.medium"]
+    #instance_types = ["m5.large"]
+    instance_types = ["t2.medium"]
     capacity_type  = "ON_DEMAND"
     disk_size      = 10
     min_size       = 2
@@ -132,7 +132,8 @@ module "aurora" {
 
 module "eks" {
   # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
-  source = "github.com/cloudacademy/terraform-aws-eks"
+  #source = "github.com/cloudacademy/terraform-aws-eks"
+  source = "github.com/rstraining4/terraform-aws-eks"
 
   cluster_name    = local.k8s.cluster_name
   cluster_version = local.k8s.version

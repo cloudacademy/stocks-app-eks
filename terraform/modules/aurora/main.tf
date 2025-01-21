@@ -22,7 +22,7 @@ resource "aws_security_group" "allow_mysql_from_private_subnets" {
 resource "aws_rds_cluster" "cloudacademy" {
   cluster_identifier   = "cloudacademy"
   engine               = "aurora-mysql"
-  engine_mode          = "serverless"
+  engine_version       = "8.0.mysql_aurora.3.08.0"
   enable_http_endpoint = true
 
   master_username = var.master_username
@@ -34,18 +34,26 @@ resource "aws_rds_cluster" "cloudacademy" {
   db_subnet_group_name    = aws_db_subnet_group.cloudacademy.name
   vpc_security_group_ids  = [aws_security_group.allow_mysql_from_private_subnets.id]
 
-  scaling_configuration {
-    auto_pause               = true
-    min_capacity             = 1
-    max_capacity             = 1
-    seconds_until_auto_pause = 300
-    timeout_action           = "ForceApplyCapacityChange"
+  serverlessv2_scaling_configuration {
+    min_capacity = 0.5 # Min ACU
+    max_capacity = 1.0 # Max ACU
   }
+}
+
+resource "aws_rds_cluster_instance" "cloudacademy" {
+  cluster_identifier = aws_rds_cluster.cloudacademy.id
+  instance_class     = "db.serverless"
+  engine             = aws_rds_cluster.cloudacademy.engine
+  engine_version     = aws_rds_cluster.cloudacademy.engine_version
 }
 
 #====================================
 
 resource "terraform_data" "db_setup" {
+  depends_on = [
+    aws_rds_cluster_instance.cloudacademy
+  ]
+
   triggers_replace = [
     filesha1("${path.module}/db_setup.sql")
   ]

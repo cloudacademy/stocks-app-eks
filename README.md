@@ -87,9 +87,9 @@ Source Code and Artifacts:
 
 #### Stocks DB
 
-Aurora RDS DB (serverless v1) SQL database:
+Aurora RDS DB (serverless v2) SQL database:
 
-- MySQL 5.7
+- MySQL 8.0
 
 ### Prerequisites
 Ensure that the following tools are installed and configured appropriately.

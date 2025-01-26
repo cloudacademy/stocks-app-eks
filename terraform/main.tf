@@ -39,10 +39,10 @@ locals {
     stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.27"
+    version        = "1.31"
     instance_types = ["m5.large"]
     capacity_type  = "ON_DEMAND"
-    disk_size      = 10
+    disk_size      = 20
     min_size       = 2
     max_size       = 2
     desired_size   = 2

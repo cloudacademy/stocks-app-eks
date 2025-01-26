@@ -21,8 +21,8 @@ resource "aws_security_group" "allow_mysql_from_private_subnets" {
 
 resource "aws_rds_cluster" "cloudacademy" {
   cluster_identifier   = "cloudacademy"
-  engine               = "aurora-mysql"
-  engine_version       = "8.0.mysql_aurora.3.08.0"
+  engine               = var.engine
+  engine_version       = var.engine_version
   enable_http_endpoint = true
 
   master_username = var.master_username
@@ -35,8 +35,8 @@ resource "aws_rds_cluster" "cloudacademy" {
   vpc_security_group_ids  = [aws_security_group.allow_mysql_from_private_subnets.id]
 
   serverlessv2_scaling_configuration {
-    min_capacity = 0.5 # Min ACU
-    max_capacity = 1.0 # Max ACU
+    min_capacity = var.acu_min
+    max_capacity = var.acu_max
   }
 }
 

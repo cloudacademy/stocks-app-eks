@@ -50,7 +50,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: fake.cloudacademy.com
+    - host: elb.host.com
       http:
         paths:
           - path: /

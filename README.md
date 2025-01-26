@@ -42,8 +42,12 @@ locals {
     master_username = "root"
     master_password = "followthewhiterabbit"
     db_name         = "cloudacademy"
-    scaling_min     = 2
-    scaling_max     = 4
+    engine          = "aurora-mysql"
+    engine_version  = "8.0.mysql_aurora.3.08.0"
+    acu = {
+      min = 0.5
+      max = 1.0
+    }
   }
 }
 ```

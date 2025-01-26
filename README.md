@@ -29,10 +29,10 @@ locals {
     stocks_app_architecture = "arch1" #either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.27"
+    version        = "1.31"
     instance_types = ["m5.large"]
     capacity_type  = "ON_DEMAND"
-    disk_size      = 10
+    disk_size      = 20
     min_size       = 2
     max_size       = 2
     desired_size   = 2
@@ -87,9 +87,9 @@ Source Code and Artifacts:
 
 #### Stocks DB
 
-Aurora RDS DB (serverless v1) SQL database:
+Aurora RDS DB (serverless v2) SQL database:
 
-- MySQL 5.7
+- MySQL 8.0
 
 ### Prerequisites
 Ensure that the following tools are installed and configured appropriately.

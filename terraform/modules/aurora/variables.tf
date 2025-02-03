@@ -22,6 +22,22 @@ variable "db_name" {
   type = string
 }
 
+variable "engine" {
+  type = string
+}
+
+variable "engine_version" {
+  type = string
+}
+
 variable "secret_manager_arn" {
   type = string
+}
+
+variable "acu_min" {
+  type = number
+}
+
+variable "acu_max" {
+  type = number
 }

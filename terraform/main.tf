@@ -39,24 +39,28 @@ locals {
     stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.27"
+    version        = "1.31"
     instance_types = ["t3.small"]
     credit_specification = {
       cpu_credits = "standard"
     }
-    capacity_type  = "ON_DEMAND"
-    disk_size      = 10
-    min_size       = 2
-    max_size       = 2
-    desired_size   = 2
+    capacity_type = "ON_DEMAND"
+    disk_size     = 20
+    min_size      = 2
+    max_size      = 2
+    desired_size  = 2
   }
 
   rds = {
     master_username = "root"
     master_password = "followthewhiterabbit"
     db_name         = "cloudacademy"
-    scaling_min     = 2
-    scaling_max     = 4
+    engine          = "aurora-mysql"
+    engine_version  = "8.0.mysql_aurora.3.08.0"
+    acu = {
+      min = 0.5
+      max = 1.0
+    }
   }
 }
 
@@ -127,7 +131,11 @@ module "aurora" {
   master_username     = local.rds.master_username
   master_password     = local.rds.master_password
   db_name             = local.rds.db_name
+  engine              = local.rds.engine
+  engine_version      = local.rds.engine_version
   secret_manager_arn  = module.secretsmanager.arn
+  acu_min             = local.rds.acu.min
+  acu_max             = local.rds.acu.max
 }
 
 #====================================
@@ -144,9 +152,9 @@ module "eks" {
   create_iam_role                  = true
 
   cluster_addons = {
-    coredns            = {}
-    kube-proxy         = {}
-    vpc-cni            = {}
+    coredns    = {}
+    kube-proxy = {}
+    vpc-cni    = {}
   }
 
   vpc_id     = module.vpc.vpc_id

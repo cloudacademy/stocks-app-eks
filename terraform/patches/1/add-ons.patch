@@ -1,11 +1,11 @@
 diff --git a/terraform/main.tf b/terraform/main.tf
-index 16b1b0e..8d14be9 100644
+index e953bf1..286c8ce 100644
 --- a/terraform/main.tf
 +++ b/terraform/main.tf
-@@ -147,6 +147,8 @@ module "eks" {
-     coredns            = {}
-     kube-proxy         = {}
-     vpc-cni            = {}
+@@ -155,6 +155,8 @@ module "eks" {
+     coredns    = {}
+     kube-proxy = {}
+     vpc-cni    = {}
 +    aws-ebs-csi-driver = {}
 +    aws-efs-csi-driver = {}
    }

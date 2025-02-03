@@ -47,21 +47,43 @@ index 15b1afa..fe95982 100755
  
  sed \
  -e "s/INGRESS_FQDN/${INGRESS_LB_FQDN}/g" \
+diff --git a/terraform/k8s/archs/arch1/templates/2_api.yaml b/terraform/k8s/archs/arch1/templates/2_api.yaml
+index 97b871d..6d9363f 100644
+--- a/terraform/k8s/archs/arch1/templates/2_api.yaml
++++ b/terraform/k8s/archs/arch1/templates/2_api.yaml
+@@ -1,13 +1,3 @@
+-apiVersion: v1
+-kind: Secret
+-metadata:
+-  name: db-creds
+-  namespace: cloudacademy
+-type: Opaque
+-stringData:
+-  DB_USER: root
+-  DB_PASSWORD: followthewhiterabbit
+----
+ apiVersion: apps/v1
+ kind: Deployment
+ metadata:
 diff --git a/terraform/main.tf b/terraform/main.tf
-index d233c0d..2aa314d 100644
+index e953bf1..069d83c 100644
 --- a/terraform/main.tf
 +++ b/terraform/main.tf
-@@ -50,23 +50,6 @@ locals {
-     max_size       = 2
-     desired_size   = 2
+@@ -50,27 +50,6 @@ locals {
+     max_size      = 2
+     desired_size  = 2
    }
 -
 -  rds = {
 -    master_username = "root"
 -    master_password = "followthewhiterabbit"
 -    db_name         = "cloudacademy"
--    scaling_min     = 2
--    scaling_max     = 4
+-    engine          = "aurora-mysql"
+-    engine_version  = "8.0.mysql_aurora.3.08.0"
+-    acu = {
+-      min = 0.5
+-      max = 1.0
+-    }
 -  }
 -}
 -
@@ -75,7 +97,7 @@ index d233c0d..2aa314d 100644
  }
  
  #====================================
-@@ -119,19 +102,6 @@ module "vpc" {
+@@ -123,22 +102,6 @@ module "vpc" {
  
  #====================================
  
@@ -87,15 +109,18 @@ index d233c0d..2aa314d 100644
 -  master_username     = local.rds.master_username
 -  master_password     = local.rds.master_password
 -  db_name             = local.rds.db_name
+-  engine              = local.rds.engine
+-  engine_version      = local.rds.engine_version
 -  secret_manager_arn  = module.secretsmanager.arn
+-  acu_min             = local.rds.acu.min
+-  acu_max             = local.rds.acu.max
 -}
 -
 -#====================================
--
+ 
  module "eks" {
    # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
-   source = "github.com/cloudacademy/terraform-aws-eks"
-@@ -232,7 +204,7 @@ resource "terraform_data" "deploy_app" {
+@@ -238,7 +201,7 @@ resource "terraform_data" "deploy_app" {
        echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
        rm -f ./manifests/*.yaml
        tree
@@ -104,7 +129,7 @@ index d233c0d..2aa314d 100644
      EOT
    }
  
-@@ -242,7 +214,6 @@ resource "terraform_data" "deploy_app" {
+@@ -248,7 +211,6 @@ resource "terraform_data" "deploy_app" {
    }
  
    depends_on = [
@@ -112,20 +137,3 @@ index d233c0d..2aa314d 100644
      module.eks,
      helm_release.nginx_ingress
    ]
-diff --git a/terraform/k8s/archs/arch1/templates/2_api.yaml b/terraform/k8s/archs/arch1/templates/2_api.yaml
-index 97b871d..0bf1806 100644
---- a/terraform/k8s/archs/arch1/templates/2_api.yaml
-+++ b/terraform/k8s/archs/arch1/templates/2_api.yaml
-@@ -1,12 +1,3 @@
--apiVersion: v1
--kind: Secret
--metadata:
--  name: db-creds
--  namespace: cloudacademy
--type: Opaque
--stringData:
--  DB_USER: root
--  DB_PASSWORD: followthewhiterabbit
- ---
- apiVersion: apps/v1
- kind: Deployment

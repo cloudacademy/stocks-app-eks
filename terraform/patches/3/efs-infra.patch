@@ -1,10 +1,10 @@
 diff --git a/terraform/main.tf b/terraform/main.tf
-index 2aa314d..75a2bb8 100644
+index e0c158a..2167d6b 100644
 --- a/terraform/main.tf
 +++ b/terraform/main.tf
-@@ -102,6 +102,52 @@ module "vpc" {
- 
- #====================================
+@@ -100,6 +100,51 @@ module "vpc" {
+   }
+ }
  
 +resource "aws_security_group" "efs" {
 +  name        = "${local.name}-efs"
@@ -50,12 +50,11 @@ index 2aa314d..75a2bb8 100644
 +  security_groups = [aws_security_group.efs.id]
 +}
 +
-+#====================================
 +
- module "eks" {
-   # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
-   source = "github.com/cloudacademy/terraform-aws-eks"
-@@ -204,7 +250,7 @@ resource "terraform_data" "deploy_app" {
+ #====================================
+ 
+ 
+@@ -212,7 +257,7 @@ resource "terraform_data" "deploy_app" {
        echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
        rm -f ./manifests/*.yaml
        tree

@@ -39,7 +39,7 @@ locals {
     stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.31"
+    version        = "1.32"
     instance_types = ["t3.small"]
     credit_specification = {
       cpu_credits = "standard"
@@ -162,7 +162,7 @@ module "eks" {
 
   eks_managed_node_groups = {
     default = {
-      use_custom_launch_template = false
+      use_custom_launch_template = true
       create_iam_role            = true
 
       instance_types = local.k8s.instance_types
@@ -173,6 +173,13 @@ module "eks" {
       min_size     = local.k8s.min_size
       max_size     = local.k8s.max_size
       desired_size = local.k8s.desired_size
+
+      metadata_options = {
+        http_endpoint               = "enabled"
+        http_tokens                 = "optional"
+        http_put_response_hop_limit = 1
+        instance_metadata_tags      = "enabled"
+      }
     }
   }
 

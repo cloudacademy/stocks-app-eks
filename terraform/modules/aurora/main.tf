@@ -41,10 +41,11 @@ resource "aws_rds_cluster" "cloudacademy" {
 }
 
 resource "aws_rds_cluster_instance" "cloudacademy" {
-  cluster_identifier = aws_rds_cluster.cloudacademy.id
-  instance_class     = "db.serverless"
-  engine             = aws_rds_cluster.cloudacademy.engine
-  engine_version     = aws_rds_cluster.cloudacademy.engine_version
+  auto_minor_version_upgrade = true
+  cluster_identifier         = aws_rds_cluster.cloudacademy.id
+  instance_class             = "db.serverless"
+  engine                     = aws_rds_cluster.cloudacademy.engine
+  engine_version             = aws_rds_cluster.cloudacademy.engine_version
 }
 
 #====================================

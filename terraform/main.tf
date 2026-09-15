@@ -4,7 +4,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = ">= 5.100.0, < 6.0.0"
     }
     helm = {
       source  = "hashicorp/helm"
@@ -23,6 +23,10 @@ provider "aws" {
 
 data "aws_availability_zones" "available" {}
 
+module "versions" {
+  source = "./modules/versions"
+}
+
 locals {
   name        = "cloudacademydevops"
   environment = "prod"
@@ -39,7 +43,7 @@ locals {
     stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.31"
+    version        = module.versions.eks_version
     instance_types = ["m5.large"]
     capacity_type  = "ON_DEMAND"
     disk_size      = 20
@@ -53,7 +57,7 @@ locals {
     master_password = "followthewhiterabbit"
     db_name         = "cloudacademy"
     engine          = "aurora-mysql"
-    engine_version  = "8.0.mysql_aurora.3.08.0"
+    engine_version  = module.versions.aurora_version
     acu = {
       min = 0.5
       max = 1.0

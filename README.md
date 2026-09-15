@@ -29,7 +29,7 @@ locals {
     stocks_app_architecture = "arch1" #either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.31"
+    version        = module.versions.eks_version
     instance_types = ["m5.large"]
     capacity_type  = "ON_DEMAND"
     disk_size      = 20
@@ -43,7 +43,7 @@ locals {
     master_password = "followthewhiterabbit"
     db_name         = "cloudacademy"
     engine          = "aurora-mysql"
-    engine_version  = "8.0.mysql_aurora.3.08.0"
+    engine_version  = module.versions.aurora_version
     acu = {
       min = 0.5
       max = 1.0
@@ -94,6 +94,25 @@ Source Code and Artifacts:
 Aurora RDS DB (serverless v2) SQL database:
 
 - MySQL 8.0
+
+### Engine version selection
+
+Terraform's `terraform/modules/versions` module queries AWS in the configured region during planning:
+
+- EKS uses the oldest Kubernetes minor version in standard support, sorted numerically.
+- Aurora uses the latest available MySQL 8.0-compatible release and checks that it is orderable as `db.serverless`. Planning fails if that combination is unavailable.
+- Aurora's instance explicitly enables automatic minor version upgrades during AWS maintenance windows.
+
+The selected versions are exposed as the `eks_version` and `aurora_version` Terraform outputs. Subsequent plans refresh these lookups and can propose engine upgrades as AWS availability changes; review the plan before applying to an existing deployment.
+
+The lab template only modifies Terraform to use the lab's pre-created IAM roles. It installs kubectl separately at bootstrap using the same EKS standard-support policy. If the support window changes before Terraform runs, the two lookups can select different minor versions; check `kubectl version --client` against `terraform output -raw eks_version` in that case.
+
+The version module's offline tests require Terraform 1.7 or later:
+
+```bash
+terraform -chdir=terraform/modules/versions init
+terraform -chdir=terraform/modules/versions test
+```
 
 ### Prerequisites
 Ensure that the following tools are installed and configured appropriately.

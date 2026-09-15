@@ -29,7 +29,6 @@ locals {
 
 data "aws_rds_engine_version" "aurora" {
   engine                 = "aurora-mysql"
-  version                = "8.0.mysql_aurora.3."
   parameter_group_family = "aurora-mysql8.0"
   latest                 = true
   include_all            = false

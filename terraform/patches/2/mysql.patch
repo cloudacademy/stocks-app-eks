@@ -66,7 +66,7 @@ index 97b871d..6d9363f 100644
  kind: Deployment
  metadata:
 diff --git a/terraform/main.tf b/terraform/main.tf
-index e953bf1..069d83c 100644
+index a1f0b4f..d6f5c1c 100644
 --- a/terraform/main.tf
 +++ b/terraform/main.tf
 @@ -50,27 +50,6 @@ locals {
@@ -79,7 +79,7 @@ index e953bf1..069d83c 100644
 -    master_password = "followthewhiterabbit"
 -    db_name         = "cloudacademy"
 -    engine          = "aurora-mysql"
--    engine_version  = "8.0.mysql_aurora.3.08.0"
+-    engine_version  = data.aws_rds_orderable_db_instance.aurora.engine_version
 -    acu = {
 -      min = 0.5
 -      max = 1.0
@@ -120,7 +120,7 @@ index e953bf1..069d83c 100644
  
  module "eks" {
    # forked from terraform-aws-modules/eks/aws, fixes deprecated resolve_conflicts issue
-@@ -238,7 +201,7 @@ resource "terraform_data" "deploy_app" {
+@@ -245,7 +208,7 @@ resource "terraform_data" "deploy_app" {
        echo "deploying *** ${local.k8s.stocks_app_architecture} *** pattern..."
        rm -f ./manifests/*.yaml
        tree
@@ -129,7 +129,7 @@ index e953bf1..069d83c 100644
      EOT
    }
  
-@@ -248,7 +211,6 @@ resource "terraform_data" "deploy_app" {
+@@ -255,7 +218,6 @@ resource "terraform_data" "deploy_app" {
    }
  
    depends_on = [
@@ -137,3 +137,22 @@ index e953bf1..069d83c 100644
      module.eks,
      helm_release.nginx_ingress
    ]
+@@ -282,18 +244,3 @@ locals {
+   }
+   eks_version = try(values(local.eks_versions)[0], null)
+ }
+-
+-data "aws_rds_engine_version" "aurora" {
+-  engine                 = "aurora-mysql"
+-  parameter_group_family = "aurora-mysql8.0"
+-  latest                 = true
+-  include_all            = false
+-}
+-
+-# Confirm the selected MySQL 8.0-compatible release is available for Serverless v2.
+-data "aws_rds_orderable_db_instance" "aurora" {
+-  engine                     = "aurora-mysql"
+-  engine_version             = data.aws_rds_engine_version.aurora.version_actual
+-  preferred_instance_classes = ["db.serverless"]
+-  supported_engine_modes     = ["provisioned"]
+-}

@@ -4,11 +4,11 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 5.0.0"
+      version = ">= 5.100.0, < 6.0.0"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = ">= 2.10.0"
+      version = "~> 2.10"
     }
   }
 }
@@ -39,7 +39,7 @@ locals {
     stocks_app_architecture = "arch1" # <===== either arch1 or arch2
 
     cluster_name   = "${local.name}-eks-${local.environment}"
-    version        = "1.32"
+    version        = local.eks_version
     instance_types = ["t3.small"]
     credit_specification = {
       cpu_credits = "standard"
@@ -56,7 +56,7 @@ locals {
     master_password = "followthewhiterabbit"
     db_name         = "cloudacademy"
     engine          = "aurora-mysql"
-    engine_version  = "8.0.mysql_aurora.3.08.0"
+    engine_version  = data.aws_rds_orderable_db_instance.aurora.engine_version
     acu = {
       min = 0.5
       max = 1.0
@@ -77,7 +77,7 @@ module "secretsmanager" {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = ">= 5.0.0"
+  version = "~> 5.0"
 
   name = local.name
   cidr = local.vpc_cidr
@@ -259,4 +259,41 @@ resource "terraform_data" "deploy_app" {
     module.eks,
     helm_release.nginx_ingress
   ]
+}
+
+# Resolve engine versions in Terraform, without bootstrap rewriting this file.
+data "aws_eks_cluster_versions" "standard" {
+  cluster_type   = "eks"
+  version_status = "STANDARD_SUPPORT"
+
+  lifecycle {
+    postcondition {
+      condition     = length(self.cluster_versions) > 0
+      error_message = "No EKS versions in standard support are available in this region."
+    }
+  }
+}
+
+locals {
+  # Numeric sorting: 1.100 must sort after 1.99.
+  eks_versions = {
+    for version in data.aws_eks_cluster_versions.standard.cluster_versions :
+    format("%05d.%05d", tonumber(split(".", version.cluster_version)[0]), tonumber(split(".", version.cluster_version)[1])) => version.cluster_version
+  }
+  eks_version = try(values(local.eks_versions)[0], null)
+}
+
+data "aws_rds_engine_version" "aurora" {
+  engine                 = "aurora-mysql"
+  parameter_group_family = "aurora-mysql8.0"
+  latest                 = true
+  include_all            = false
+}
+
+# Confirm the selected MySQL 8.0-compatible release is available for Serverless v2.
+data "aws_rds_orderable_db_instance" "aurora" {
+  engine                     = "aurora-mysql"
+  engine_version             = data.aws_rds_engine_version.aurora.version_actual
+  preferred_instance_classes = ["db.serverless"]
+  supported_engine_modes     = ["provisioned"]
 }

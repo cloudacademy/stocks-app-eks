@@ -39,3 +39,6 @@ terraform.rc
 **/.DS_Store
 
 **/config
+
+# Local version-selection experiments/tests; runtime lookups live in main.tf.
+versions/
